@@ -4,10 +4,34 @@
   padding: 24px;
 }
 
-h1 {
-  font-size: 36px;
+form {
+  display: flex;
+  gap: 10px;
+}
+
+form input {
+  flex: 1;
+  padding: 10px;
+}
+
+button {
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
 }
 
 li {
-  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  margin-top: 10px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 }
