@@ -1,0 +1,13 @@
+.app {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 24px;
+}
+
+h1 {
+  font-size: 36px;
+}
+
+li {
+  margin-bottom: 12px;
+}
