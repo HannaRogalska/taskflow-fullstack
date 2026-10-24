@@ -1,9 +1,9 @@
 import express, { type Express, type Request, type Response } from "express";
-
+import { taskType } from "./types/type.js";
 const app: Express = express();
 const PORT = 3000;
 
-const tasks = [
+const tasks: taskType[] = [
   { id: 1, title: "Learn React", completed: false },
   { id: 2, title: "Connect Neon", completed: false },
   { id: 3, title: "Create backend", completed: true },
