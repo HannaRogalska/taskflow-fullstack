@@ -48,7 +48,12 @@ function App() {
       </form>
       <ul>
         {tasks.map((task) => (
-          <TaskItem task={task} onToggle={onToggle} deleteTask={deleteTask} />
+          <TaskItem
+            key={task.id}
+            task={task}
+            onToggle={onToggle}
+            deleteTask={deleteTask}
+          />
         ))}
       </ul>
     </main>
