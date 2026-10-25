@@ -1,20 +1,33 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type Task } from "./types/task";
 import TaskItem from "./components/TaskItem";
-
-export const initialTasks: Task[] = [
-  { id: 1, title: "Learn React", completed: false },
-  { id: 2, title: "Connect with Neon", completed: false },
-  { id: 3, title: "Create backend", completed: true },
-];
+import { getTasks } from "./api/get-tasks";
 
 function App() {
   const [newTask, setNewTask] = useState("");
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const data: Task[] = await getTasks();
+
+        setTasks(data);
+      } catch (error) {
+        setError("Failed to fetch tasks");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTasks();
+  }, []);
 
   const addNewTask = () => {
     const newTitle = newTask.trim();
+    if (!newTitle) return;
 
     const createNewTask: Task = {
       id: Date.now(),
@@ -38,6 +51,7 @@ function App() {
     <main>
       <h1>TaskFlow</h1>
       <p>My tasks</p>
+
       <form onSubmit={(e) => (e.preventDefault(), addNewTask())}>
         <input
           type="text"
@@ -46,6 +60,8 @@ function App() {
         />
         <button type="submit">AddNewTask</button>
       </form>
+      {loading && <p>Loading ...</p>}
+      {error && <p>{error}</p>}
       <ul>
         {tasks.map((task) => (
           <TaskItem
