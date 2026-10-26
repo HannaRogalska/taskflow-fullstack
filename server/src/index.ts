@@ -4,7 +4,7 @@ import cors from "cors";
 const app: Express = express();
 const PORT = 3000;
 
-const tasks: taskType[] = [
+let tasks: taskType[] = [
   { id: 1, title: "Learn React", completed: false },
   { id: 2, title: "Connect Neon", completed: false },
   { id: 3, title: "Create backend", completed: true },
@@ -12,6 +12,12 @@ const tasks: taskType[] = [
 app.use(cors());
 
 app.get("/api/tasks", (req: Request, res: Response) => {
+  res.json(tasks);
+});
+
+app.delete("/api/tasks/:id", (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  tasks = tasks.filter((prev) => id !== prev.id);
   res.json(tasks);
 });
 

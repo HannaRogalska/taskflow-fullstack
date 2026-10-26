@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { type Task } from "./types/task";
 import TaskItem from "./components/TaskItem";
 import { getTasks } from "./api/get-tasks";
+import { deleteTask } from "./api/delete-task";
 
 function App() {
   const [newTask, setNewTask] = useState("");
@@ -24,7 +25,10 @@ function App() {
     };
     fetchTasks();
   }, []);
-
+  const handleDeleteTask = async (id: number) => {
+    const updatedTasks = await deleteTask(id);
+    setTasks(updatedTasks);
+  };
   const addNewTask = () => {
     const newTitle = newTask.trim();
     if (!newTitle) return;
@@ -44,9 +48,7 @@ function App() {
       ),
     );
   };
-  const deleteTask = (id: number) => {
-    setTasks((tasks) => tasks.filter((task) => task.id !== id));
-  };
+
   return (
     <main>
       <h1>TaskFlow</h1>
@@ -68,7 +70,7 @@ function App() {
             key={task.id}
             task={task}
             onToggle={onToggle}
-            deleteTask={deleteTask}
+            deleteTask={handleDeleteTask}
           />
         ))}
       </ul>
