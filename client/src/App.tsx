@@ -4,6 +4,7 @@ import { type Task } from "./types/task";
 import TaskItem from "./components/TaskItem";
 import { getTasks } from "./api/get-tasks";
 import { deleteTask } from "./api/delete-task";
+import { addTask } from "./api/add-task";
 
 function App() {
   const [newTask, setNewTask] = useState("");
@@ -26,19 +27,15 @@ function App() {
     fetchTasks();
   }, []);
   const handleDeleteTask = async (id: number) => {
-    const updatedTasks = await deleteTask(id);
-    setTasks(updatedTasks);
+    await deleteTask(id);
+    setTasks((prev) => prev.filter((task) => task.id !== id));
   };
-  const addNewTask = () => {
+  const addNewTask = async () => {
     const newTitle = newTask.trim();
     if (!newTitle) return;
 
-    const createNewTask: Task = {
-      id: Date.now(),
-      title: newTitle,
-      completed: false,
-    };
-    setTasks((prev) => [...prev, createNewTask]);
+    const createdTask = await addTask(newTitle);
+    setTasks((prev) => [...prev, createdTask]);
     setNewTask("");
   };
   const onToggle = (id: number) => {
