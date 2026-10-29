@@ -5,6 +5,7 @@ import TaskItem from "./components/TaskItem";
 import { getTasks } from "./api/get-tasks";
 import { deleteTask } from "./api/delete-task";
 import { addTask } from "./api/add-task";
+import { patchTask } from "./api/patch-task";
 
 function App() {
   const [newTask, setNewTask] = useState("");
@@ -38,11 +39,14 @@ function App() {
     setTasks((prev) => [...prev, createdTask]);
     setNewTask("");
   };
-  const onToggle = (id: number) => {
+  const onToggle = async (id: number) => {
+    const task = tasks.find((task) => task.id === id);
+    if (!task) return;
+
+    const updatedTask = await patchTask(id, !task.completed);
+
     setTasks((tasks) =>
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
-      ),
+      tasks.map((task) => (task.id === id ? updatedTask : task)),
     );
   };
 
@@ -66,7 +70,9 @@ function App() {
           <TaskItem
             key={task.id}
             task={task}
-            onToggle={onToggle}
+            onToggle={() => {
+              onToggle(task.id);
+            }}
             deleteTask={handleDeleteTask}
           />
         ))}
