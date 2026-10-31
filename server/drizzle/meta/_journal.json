@@ -8,6 +8,20 @@
       "when": 1793191327392,
       "tag": "0000_fast_songbird",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793354991755,
+      "tag": "0001_bored_the_order",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793356193332,
+      "tag": "0002_daily_frank_castle",
+      "breakpoints": true
     }
   ]
 }
