@@ -1,7 +1,7 @@
 import express, { type Express, type Request, type Response } from "express";
 import cors from "cors";
 import { db } from "./db/index.js";
-import { tasks as tasksTable } from "./db/schema.js";
+import { tasks as tasksTable, users as userTable } from "./db/schema.js";
 import { eq, asc } from "drizzle-orm";
 const app: Express = express();
 const PORT = 3000;
@@ -35,6 +35,28 @@ app.patch("/api/tasks/:id", async (req: Request, res: Response) => {
     .where(eq(tasksTable.id, id))
     .returning();
   res.json(result);
+});
+app.get("/api/users/:id/tasks", async (req: Request, res: Response) => {
+  const userId = Number(req.params.id);
+  const result = await db
+    .select()
+    .from(tasksTable)
+    .where(eq(tasksTable.userId, userId))
+    .orderBy(asc(tasksTable.id));
+  res.json(result);
+});
+app.get("/api/users/login/:name", async (req: Request, res: Response) => {
+  const userName = req.params.name;
+  if (typeof userName !== "string") {
+    res.status(400).json({ message: "Invalid username" });
+    return;
+  }
+  const [getUser] = await db
+    .select()
+    .from(userTable)
+    .where(eq(userTable.name, userName));
+  if (!getUser) return res.json({ message: "User not found" });
+  res.json(getUser);
 });
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
