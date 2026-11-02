@@ -22,8 +22,9 @@ function App() {
   const addNewTask = async () => {
     const newTitle = newTask.trim();
     if (!newTitle) return;
+    const { id } = await getUser(username);
 
-    const createdTask = await addTask(newTitle);
+    const createdTask = await addTask(newTitle, id);
     setTasks((prev) => [...prev, createdTask]);
     setNewTask("");
   };
@@ -33,8 +34,8 @@ function App() {
     setTasks([]);
     setError(null);
     try {
-      const { id } = await getUser(username);
-      const data: Task[] = await getTasks(id);
+      const user = await getUser(username);
+      const data: Task[] = await getTasks(user.id);
       setTasks(data);
     } catch (error) {
       setError("Failed to fetch tasks");

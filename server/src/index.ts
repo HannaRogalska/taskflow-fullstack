@@ -21,9 +21,13 @@ app.delete("/api/tasks/:id", async (req: Request, res: Response) => {
     message: "Task deleted successfully",
   });
 });
-app.post("/api/tasks/", async (req: Request, res: Response) => {
+app.post("/api/users/:id/tasks/", async (req: Request, res: Response) => {
+  const getedUserId = Number(req.params.id);
   const { title } = req.body;
-  const [result] = await db.insert(tasksTable).values({ title }).returning();
+  const [result] = await db
+    .insert(tasksTable)
+    .values({ userId: getedUserId, title })
+    .returning();
   res.json(result);
 });
 app.patch("/api/tasks/:id", async (req: Request, res: Response) => {
@@ -43,6 +47,10 @@ app.get("/api/users/:id/tasks", async (req: Request, res: Response) => {
     .from(tasksTable)
     .where(eq(tasksTable.userId, userId))
     .orderBy(asc(tasksTable.id));
+  if (!result) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
   res.json(result);
 });
 app.get("/api/users/login/:name", async (req: Request, res: Response) => {
@@ -55,7 +63,15 @@ app.get("/api/users/login/:name", async (req: Request, res: Response) => {
     .select()
     .from(userTable)
     .where(eq(userTable.name, userName));
-  if (!getUser) return res.json({ message: "User not found" });
+  if (!getUser) {
+    const [newUser] = await db
+      .insert(userTable)
+      .values({ name: userName })
+      .returning();
+    res.status(201).json(newUser);
+    return;
+  }
+
   res.json(getUser);
 });
 app.listen(PORT, () => {
