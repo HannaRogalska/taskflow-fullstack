@@ -18,7 +18,7 @@ export const tasks = pgTable("tasks", {
 });
 export const users = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar("name", { length: 50 }).notNull(),
+  name: varchar("name", { length: 50 }).notNull().unique(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
