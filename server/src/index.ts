@@ -9,11 +9,6 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/tasks", async (req: Request, res: Response) => {
-  const result = await db.select().from(tasksTable).orderBy(asc(tasksTable.id));
-  res.json(result);
-});
-
 app.delete("/api/tasks/:id", async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   await db.delete(tasksTable).where(eq(tasksTable.id, id));
@@ -53,8 +48,8 @@ app.get("/api/users/:id/tasks", async (req: Request, res: Response) => {
   }
   res.json(result);
 });
-app.get("/api/users/login/:name", async (req: Request, res: Response) => {
-  const userName = req.params.name;
+app.post("/api/users/login", async (req: Request, res: Response) => {
+  const { userName } = req.body;
   if (typeof userName !== "string") {
     res.status(400).json({ message: "Invalid username" });
     return;
