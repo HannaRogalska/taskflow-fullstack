@@ -1,74 +1,27 @@
-import express, { type Express, type Request, type Response } from "express";
+import express, { type Express } from "express";
 import cors from "cors";
-import { db } from "./db/index.js";
-import { tasks as tasksTable, users as userTable } from "./db/schema.js";
-import { eq, asc } from "drizzle-orm";
+
+import { errorHandler } from "./middleware/error-handler.js";
+import {
+  getUserTasks,
+  deleteTask,
+  createTask,
+  updateTask,
+} from "./controllers/task-controller.js";
+import { loginUser } from "./controllers/user-controller.js";
+
 const app: Express = express();
 const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
 
-app.delete("/api/tasks/:id", async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  await db.delete(tasksTable).where(eq(tasksTable.id, id));
-  res.json({
-    message: "Task deleted successfully",
-  });
-});
-app.post("/api/users/:id/tasks/", async (req: Request, res: Response) => {
-  const getedUserId = Number(req.params.id);
-  const { title } = req.body;
-  const [result] = await db
-    .insert(tasksTable)
-    .values({ userId: getedUserId, title })
-    .returning();
-  res.json(result);
-});
-app.patch("/api/tasks/:id", async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  const { completed } = req.body;
-  const [result] = await db
-    .update(tasksTable)
-    .set({ completed })
-    .where(eq(tasksTable.id, id))
-    .returning();
-  res.json(result);
-});
-app.get("/api/users/:id/tasks", async (req: Request, res: Response) => {
-  const userId = Number(req.params.id);
-  const result = await db
-    .select()
-    .from(tasksTable)
-    .where(eq(tasksTable.userId, userId))
-    .orderBy(asc(tasksTable.id));
-  if (!result) {
-    res.status(404).json({ message: "User not found" });
-    return;
-  }
-  res.json(result);
-});
-app.post("/api/users/login", async (req: Request, res: Response) => {
-  const { userName } = req.body;
-  if (typeof userName !== "string") {
-    res.status(400).json({ message: "Invalid username" });
-    return;
-  }
-  const [getUser] = await db
-    .select()
-    .from(userTable)
-    .where(eq(userTable.name, userName));
-  if (!getUser) {
-    const [newUser] = await db
-      .insert(userTable)
-      .values({ name: userName })
-      .returning();
-    res.status(201).json(newUser);
-    return;
-  }
-
-  res.json(getUser);
-});
+app.delete("/api/tasks/:id", deleteTask);
+app.post("/api/users/:id/tasks/", createTask);
+app.patch("/api/tasks/:id", updateTask);
+app.get("/api/users/:id/tasks", getUserTasks);
+app.post("/api/users/login", loginUser);
+app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
