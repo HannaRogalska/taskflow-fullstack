@@ -2,37 +2,43 @@ import type { Request, Response } from "express";
 import { db } from "../db/index.js";
 import { tasks as tasksTable } from "../db/schema.js";
 import { eq, asc } from "drizzle-orm";
+import {
+  taskIdSchema,
+  createTaskSchema,
+  updateTaskSchema,
+} from "../validators/task-validator.js";
 
 export const getUserTasks = async (req: Request, res: Response) => {
-  const userId = Number(req.params.id);
+  const { id } = taskIdSchema.parse(req.params);
 
   const result = await db
     .select()
     .from(tasksTable)
-    .where(eq(tasksTable.userId, userId))
+    .where(eq(tasksTable.userId, id))
     .orderBy(asc(tasksTable.id));
 
   res.json(result);
 };
 export const deleteTask = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+  const { id } = taskIdSchema.parse(req.params);
   await db.delete(tasksTable).where(eq(tasksTable.id, id));
   res.json({
     message: "Task deleted successfully",
   });
 };
 export const createTask = async (req: Request, res: Response) => {
-  const getedUserId = Number(req.params.id);
-  const { title } = req.body;
+  const { id } = taskIdSchema.parse(req.params);
+
+  const { title } = createTaskSchema.parse(req.body);
   const [result] = await db
     .insert(tasksTable)
-    .values({ userId: getedUserId, title })
+    .values({ userId: id, title })
     .returning();
   res.json(result);
 };
 export const updateTask = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  const { completed } = req.body;
+  const { id } = taskIdSchema.parse(req.params);
+  const { completed } = updateTaskSchema.parse(req.body);
   const [result] = await db
     .update(tasksTable)
     .set({ completed })
