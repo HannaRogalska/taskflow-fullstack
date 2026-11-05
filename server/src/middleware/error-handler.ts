@@ -15,6 +15,12 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     });
     return;
   }
+  if (err?.code === "23505" || err?.cause?.code === "23505") {
+    res.status(409).json({
+      message: "Resource already exists",
+    });
+    return;
+  }
   res.status(500).json({
     message: "Something went wrong",
   });
