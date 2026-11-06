@@ -4,18 +4,23 @@ import {
   text,
   boolean,
   pgTable,
+  index,
   integer,
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const tasks = pgTable("tasks", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  completed: boolean().notNull().default(false),
-  userId: integer().references(() => users.id, {
-    onDelete: "cascade",
-  }),
-});
+export const tasks = pgTable(
+  "tasks",
+  {
+    id: serial("id").primaryKey(),
+    title: text("title").notNull(),
+    completed: boolean().notNull().default(false),
+    userId: integer().references(() => users.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (table) => [index("tasks_user_id_idx").on(table.userId)],
+);
 export const users = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar("name", { length: 50 }).notNull().unique(),
