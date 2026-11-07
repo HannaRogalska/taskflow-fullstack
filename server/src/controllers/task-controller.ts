@@ -6,6 +6,7 @@ import {
   taskIdSchema,
   createTaskSchema,
   updateTaskSchema,
+  paginationSchema,
 } from "../validators/task-validator.js";
 
 export const getUserTasks = async (req: Request, res: Response) => {
@@ -44,5 +45,18 @@ export const updateTask = async (req: Request, res: Response) => {
     .set({ completed })
     .where(eq(tasksTable.id, id))
     .returning();
+  res.json(result);
+};
+export const getTaskPagination = async (req: Request, res: Response) => {
+  const { page } = paginationSchema.parse(req.query);
+  const { id } = taskIdSchema.parse(req.params);
+  const result = await db
+    .select()
+    .from(tasksTable)
+    .where(eq(tasksTable.userId, id))
+    .orderBy(asc(tasksTable.id))
+    .limit(10)
+    .offset((page - 1) * 10);
+
   res.json(result);
 };

@@ -7,6 +7,7 @@ import {
   deleteTask,
   createTask,
   updateTask,
+  getTaskPagination,
 } from "./controllers/task-controller.js";
 import { loginUser } from "./controllers/user-controller.js";
 
@@ -21,6 +22,7 @@ app.post("/api/users/:id/tasks/", createTask);
 app.patch("/api/tasks/:id", updateTask);
 app.get("/api/users/:id/tasks", getUserTasks);
 app.post("/api/users/login", loginUser);
+app.get("/users/:id/tasks", getTaskPagination);
 app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

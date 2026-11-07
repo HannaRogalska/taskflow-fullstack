@@ -9,3 +9,6 @@ export const createTaskSchema = z.object({
 export const updateTaskSchema = z.object({
   completed: z.boolean(),
 });
+export const paginationSchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+});
