@@ -15,6 +15,13 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState("");
 
+  const handleLogout = () => {
+    setUsername("");
+    setTasks([]);
+    setNewTask("");
+    setError(null);
+  };
+
   const handleDeleteTask = async (id: number) => {
     await deleteTask(id);
     setTasks((prev) => prev.filter((task) => task.id !== id));
@@ -66,6 +73,9 @@ function App() {
           onChange={(e) => setUsername(e.target.value)}
         />
         <button type="submit">Log In</button>
+        <button type="button" onClick={handleLogout} disabled={loading}>
+          Log Out
+        </button>
       </form>
       <p>My tasks</p>
 
