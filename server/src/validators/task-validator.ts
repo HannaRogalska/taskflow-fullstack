@@ -12,3 +12,7 @@ export const updateTaskSchema = z.object({
 export const paginationSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
 });
+
+export const taskFilterSchema = z.object({
+  completed: z.enum(["true", "false"]).optional(),
+});

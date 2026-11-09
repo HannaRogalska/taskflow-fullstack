@@ -14,12 +14,17 @@ function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState<number | null>(null);
+
+  type TaskFilter = "true" | "false" | undefined;
+  const [filter, setFilter] = useState<TaskFilter>(undefined);
 
   const handleLogout = () => {
     setUsername("");
     setTasks([]);
     setNewTask("");
     setError(null);
+    setUserId(null);
   };
 
   const handleDeleteTask = async (id: number) => {
@@ -42,7 +47,8 @@ function App() {
     setError(null);
     try {
       const user = await getUser(username);
-      const data: Task[] = await getTasks(user.id);
+      setUserId(user.id);
+      const data: Task[] = await getTasks(user.id, filter);
       setTasks(data);
     } catch (error) {
       setError("Failed to fetch tasks");
@@ -60,6 +66,21 @@ function App() {
     setTasks((tasks) =>
       tasks.map((task) => (task.id === id ? updatedTask : task)),
     );
+  };
+  const handleChangeFilter = async (data: TaskFilter) => {
+    setFilter(data);
+    if (userId === null) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await getTasks(userId, data);
+      setTasks(result);
+    } catch {
+      setError("Failed to filter tasks");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,18 +110,59 @@ function App() {
       </form>
       {loading && <p>Loading ...</p>}
       {error && <p>{error}</p>}
-      <ul>
-        {tasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            onToggle={() => {
-              onToggle(task.id);
-            }}
-            deleteTask={handleDeleteTask}
-          />
-        ))}
-      </ul>
+
+      {userId !== null && (
+        <div>
+          <form className="content" onSubmit={getMyTasks}>
+            <div>
+              <label>
+                All tasks
+                <input
+                  type="radio"
+                  name="status"
+                  checked={filter === undefined}
+                  onChange={() => handleChangeFilter(undefined)}
+                />
+              </label>
+            </div>
+
+            <div>
+              <label>
+                Active
+                <input
+                  type="radio"
+                  name="status"
+                  checked={filter === "false"}
+                  onChange={() => handleChangeFilter("false")}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                Completed
+                <input
+                  type="radio"
+                  name="status"
+                  checked={filter === "true"}
+                  onChange={() => handleChangeFilter("true")}
+                />
+              </label>
+            </div>
+          </form>
+          <ul>
+            {tasks.map((task) => (
+              <TaskItem
+                key={task.id}
+                task={task}
+                onToggle={() => {
+                  onToggle(task.id);
+                }}
+                deleteTask={handleDeleteTask}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
     </main>
   );
 }

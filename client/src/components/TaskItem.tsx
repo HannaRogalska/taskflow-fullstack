@@ -1,8 +1,9 @@
 import type { taskItemProps } from "../types/task";
+import "../App.css";
 
 const TaskItem = ({ task, onToggle, deleteTask }: taskItemProps) => {
   return (
-    <li>
+    <li className="tasks_list">
       <p>{task.title}</p>
       <div>
         <input

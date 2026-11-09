@@ -24,7 +24,13 @@ ul {
   list-style: none;
 }
 
-li {
+.content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.tasks_list {
   display: flex;
   align-items: center;
   justify-content: space-between;

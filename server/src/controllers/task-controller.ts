@@ -1,25 +1,15 @@
 import type { Request, Response } from "express";
 import { db } from "../db/index.js";
 import { tasks as tasksTable } from "../db/schema.js";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, or, and, sql } from "drizzle-orm";
 import {
   taskIdSchema,
   createTaskSchema,
   updateTaskSchema,
   paginationSchema,
+  taskFilterSchema,
 } from "../validators/task-validator.js";
 
-export const getUserTasks = async (req: Request, res: Response) => {
-  const { id } = taskIdSchema.parse(req.params);
-
-  const result = await db
-    .select()
-    .from(tasksTable)
-    .where(eq(tasksTable.userId, id))
-    .orderBy(asc(tasksTable.id));
-
-  res.json(result);
-};
 export const deleteTask = async (req: Request, res: Response) => {
   const { id } = taskIdSchema.parse(req.params);
   await db.delete(tasksTable).where(eq(tasksTable.id, id));
@@ -58,5 +48,25 @@ export const getTaskPagination = async (req: Request, res: Response) => {
     .limit(10)
     .offset((page - 1) * 10);
 
+  res.json(result);
+};
+
+export const getUserTasks = async (req: Request, res: Response) => {
+  const { id } = taskIdSchema.parse(req.params);
+
+  const { completed } = taskFilterSchema.parse(req.query);
+  const result = await db
+    .select()
+    .from(tasksTable)
+    .where(
+      and(
+        eq(tasksTable.userId, id),
+
+        completed !== undefined
+          ? eq(tasksTable.completed, completed === "true")
+          : undefined,
+      ),
+    )
+    .orderBy(asc(tasksTable.id));
   res.json(result);
 };
