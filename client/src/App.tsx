@@ -4,6 +4,7 @@ import { type Task, type TaskFilter } from "./types/task";
 import TaskFilters from "./components/TaskFilters";
 import TaskItem from "./components/TaskItem";
 import LoginForm from "./components/LoginForm";
+import AddTaskForm from "./components/AddTaskForm";
 import { getTasks } from "./api/get-tasks";
 import { deleteTask } from "./api/delete-task";
 import { addTask } from "./api/add-task";
@@ -96,14 +97,11 @@ function App() {
       />
       <p>My tasks</p>
 
-      <form onSubmit={(e) => (e.preventDefault(), addNewTask())}>
-        <input
-          type="text"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-        />
-        <button type="submit">AddNewTask</button>
-      </form>
+      <AddTaskForm
+        newTask={newTask}
+        onTaskChange={setNewTask}
+        onAddTask={addNewTask}
+      />
       {loading && <p>Loading ...</p>}
       {error && <p>{error}</p>}
 
