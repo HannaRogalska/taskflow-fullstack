@@ -1,3 +1,5 @@
+export type TaskFilter = "true" | "false" | undefined;
+
 export type Task = {
   id: number;
   title: string;

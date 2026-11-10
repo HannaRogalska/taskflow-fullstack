@@ -1,6 +1,7 @@
 import "./App.css";
 import { useState, type SubmitEventHandler } from "react";
-import { type Task } from "./types/task";
+import { type Task, type TaskFilter } from "./types/task";
+import TaskFilters from "./components/TaskFilters";
 import TaskItem from "./components/TaskItem";
 import LoginForm from "./components/LoginForm";
 import { getTasks } from "./api/get-tasks";
@@ -17,7 +18,6 @@ function App() {
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState<number | null>(null);
 
-  type TaskFilter = "true" | "false" | undefined;
   const [filter, setFilter] = useState<TaskFilter>(undefined);
 
   const handleLogout = () => {
@@ -109,42 +109,11 @@ function App() {
 
       {userId !== null && (
         <div>
-          <form className="content" onSubmit={getMyTasks}>
-            <div>
-              <label>
-                All tasks
-                <input
-                  type="radio"
-                  name="status"
-                  checked={filter === undefined}
-                  onChange={() => handleChangeFilter(undefined)}
-                />
-              </label>
-            </div>
-
-            <div>
-              <label>
-                Active
-                <input
-                  type="radio"
-                  name="status"
-                  checked={filter === "false"}
-                  onChange={() => handleChangeFilter("false")}
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                Completed
-                <input
-                  type="radio"
-                  name="status"
-                  checked={filter === "true"}
-                  onChange={() => handleChangeFilter("true")}
-                />
-              </label>
-            </div>
-          </form>
+          <TaskFilters
+            filter={filter}
+            onFilterChange={handleChangeFilter}
+            onSubmit={getMyTasks}
+          />
           <ul>
             {tasks.map((task) => (
               <TaskItem
