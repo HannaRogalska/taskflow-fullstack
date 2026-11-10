@@ -2,6 +2,7 @@ import "./App.css";
 import { useState, type SubmitEventHandler } from "react";
 import { type Task } from "./types/task";
 import TaskItem from "./components/TaskItem";
+import LoginForm from "./components/LoginForm";
 import { getTasks } from "./api/get-tasks";
 import { deleteTask } from "./api/delete-task";
 import { addTask } from "./api/add-task";
@@ -86,18 +87,13 @@ function App() {
   return (
     <main>
       <h1>TaskFlow</h1>
-      <form onSubmit={(e) => getMyTasks(e)}>
-        <input
-          type="text"
-          placeholder="Enter your username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <button type="submit">Log In</button>
-        <button type="button" onClick={handleLogout} disabled={loading}>
-          Log Out
-        </button>
-      </form>
+      <LoginForm
+        username={username}
+        onUsernameChange={setUsername}
+        onSubmit={getMyTasks}
+        onLogout={handleLogout}
+        loading={loading}
+      />
       <p>My tasks</p>
 
       <form onSubmit={(e) => (e.preventDefault(), addNewTask())}>
