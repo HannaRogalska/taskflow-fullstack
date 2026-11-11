@@ -16,3 +16,6 @@ export const paginationSchema = z.object({
 export const taskFilterSchema = z.object({
   completed: z.enum(["true", "false"]).optional(),
 });
+export const taskSearchSchema = z.object({
+  search: z.string().trim().min(1),
+});

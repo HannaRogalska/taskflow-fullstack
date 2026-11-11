@@ -10,6 +10,8 @@ import { deleteTask } from "./api/delete-task";
 import { addTask } from "./api/add-task";
 import { patchTask } from "./api/patch-task";
 import { getUser } from "./api/get-user";
+import SearchForm from "./components/SearchForm";
+import { getSearchTask } from "./api/get-search-task";
 
 function App() {
   const [newTask, setNewTask] = useState("");
@@ -21,12 +23,15 @@ function App() {
 
   const [filter, setFilter] = useState<TaskFilter>(undefined);
 
+  const [search, setSearch] = useState<string>("");
+
   const handleLogout = () => {
     setUsername("");
     setTasks([]);
     setNewTask("");
     setError(null);
     setUserId(null);
+    setSearch("");
   };
 
   const handleDeleteTask = async (id: number) => {
@@ -85,9 +90,30 @@ function App() {
     }
   };
 
+  const handleSearchTitle: SubmitEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    if (userId === null) {
+      setError("Log in to search tasks");
+      return;
+    }
+    setLoading(true);
+    setTasks([]);
+    setError(null);
+    try {
+      const data: Task[] = await getSearchTask(userId, search);
+      setTasks(data);
+    } catch (error) {
+      setError("Failed to fetch tasks");
+      setTasks([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main>
       <h1>TaskFlow</h1>
+
       <LoginForm
         username={username}
         onUsernameChange={setUsername}
@@ -101,6 +127,11 @@ function App() {
         newTask={newTask}
         onTaskChange={setNewTask}
         onAddTask={addNewTask}
+      />
+      <SearchForm
+        title={search}
+        onChangeTitle={setSearch}
+        onSubmit={handleSearchTitle}
       />
       {loading && <p>Loading ...</p>}
       {error && <p>{error}</p>}

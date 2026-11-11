@@ -1,13 +1,14 @@
 import type { Request, Response } from "express";
 import { db } from "../db/index.js";
 import { tasks as tasksTable } from "../db/schema.js";
-import { eq, asc, or, and, sql } from "drizzle-orm";
+import { eq, asc, and, ilike } from "drizzle-orm";
 import {
   taskIdSchema,
   createTaskSchema,
   updateTaskSchema,
   paginationSchema,
   taskFilterSchema,
+  taskSearchSchema,
 } from "../validators/task-validator.js";
 
 export const deleteTask = async (req: Request, res: Response) => {
@@ -68,5 +69,18 @@ export const getUserTasks = async (req: Request, res: Response) => {
       ),
     )
     .orderBy(asc(tasksTable.id));
+  res.json(result);
+};
+
+export const getUserTasksByFilter = async (req: Request, res: Response) => {
+  const { search } = taskSearchSchema.parse(req.query);
+  const { id } = taskIdSchema.parse(req.params);
+
+  const result = await db
+    .select()
+    .from(tasksTable)
+    .where(
+      and(eq(tasksTable.userId, id), ilike(tasksTable.title, `%${search}%`)),
+    );
   res.json(result);
 };
