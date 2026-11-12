@@ -32,6 +32,7 @@ function App() {
     setError(null);
     setUserId(null);
     setSearch("");
+    setFilter(undefined);
   };
 
   const handleDeleteTask = async (id: number) => {
@@ -128,11 +129,13 @@ function App() {
         onTaskChange={setNewTask}
         onAddTask={addNewTask}
       />
-      <SearchForm
-        title={search}
-        onChangeTitle={setSearch}
-        onSubmit={handleSearchTitle}
-      />
+      {userId !== null && (
+        <SearchForm
+          title={search}
+          onChangeTitle={setSearch}
+          onSubmit={handleSearchTitle}
+        />
+      )}
       {loading && <p>Loading ...</p>}
       {error && <p>{error}</p>}
 
