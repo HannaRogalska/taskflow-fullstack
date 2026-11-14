@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { db } from "../db/index.js";
 import { tasks as tasksTable } from "../db/schema.js";
-import { eq, asc, and, ilike } from "drizzle-orm";
+import { eq, asc, and, ilike, count } from "drizzle-orm";
 import {
   taskIdSchema,
   createTaskSchema,
@@ -48,8 +48,25 @@ export const getTaskPagination = async (req: Request, res: Response) => {
     .orderBy(asc(tasksTable.id))
     .limit(10)
     .offset((page - 1) * 10);
+  const countTasks = await db
+    .select({
+      completed: tasksTable.completed,
+      total: count(),
+    })
+    .from(tasksTable)
+    .where(eq(tasksTable.userId, id))
+    .groupBy(tasksTable.completed);
 
-  res.json(result);
+  const totalCompleted =
+    countTasks.find((i) => i.completed === true)?.total ?? 0;
+  const totalActive = countTasks.find((i) => i.completed === false)?.total ?? 0;
+  const allCountTasks = totalCompleted + totalActive;
+
+  res.json({
+    result,
+    countTasks,
+    allCountTasks,
+  });
 };
 
 export const getUserTasks = async (req: Request, res: Response) => {
