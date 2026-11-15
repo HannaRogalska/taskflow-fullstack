@@ -91,6 +91,22 @@ function App() {
     }
   };
 
+  const handleClearSearch = async () => {
+    if (userId === null) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getTasks(userId, filter);
+      setTasks(data);
+      setSearch("");
+    } catch {
+      setError("Failed to clear search");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSearchTitle: SubmitEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (userId === null) {
@@ -134,6 +150,8 @@ function App() {
           title={search}
           onChangeTitle={setSearch}
           onSubmit={handleSearchTitle}
+          onClear={handleClearSearch}
+          loading={loading}
         />
       )}
       {loading && <p>Loading ...</p>}

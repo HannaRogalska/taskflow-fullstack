@@ -5,9 +5,11 @@ type SearchFormProps = {
   title: string;
   onChangeTitle: (title: string) => void;
   onSubmit: SubmitEventHandler<HTMLFormElement>;
+  onClear: () => Promise<void>;
+  loading: boolean;
 };
 
-const SearchForm = ({ title, onChangeTitle, onSubmit }: SearchFormProps) => {
+const SearchForm = ({ title, onChangeTitle, onSubmit, onClear, loading }: SearchFormProps) => {
   return (
     <form onSubmit={onSubmit} className="searchConntent">
       <input
@@ -17,6 +19,9 @@ const SearchForm = ({ title, onChangeTitle, onSubmit }: SearchFormProps) => {
         onChange={(e) => onChangeTitle(e.target.value)}
       />
       <button type="submit">Search</button>
+      <button type="button" onClick={onClear} disabled={loading}>
+        Clear search
+      </button>
     </form>
   );
 };
