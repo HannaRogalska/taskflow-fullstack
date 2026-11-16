@@ -1,6 +1,6 @@
 import "./App.css";
-import { useState, type SubmitEventHandler } from "react";
-import { type Task, type TaskFilter } from "./types/task";
+import { useEffect, useState, type SubmitEventHandler } from "react";
+import { type ActiveUserStats, type Task, type TaskFilter } from "./types/task";
 import TaskFilters from "./components/TaskFilters";
 import TaskItem from "./components/TaskItem";
 import LoginForm from "./components/LoginForm";
@@ -12,6 +12,8 @@ import { patchTask } from "./api/patch-task";
 import { getUser } from "./api/get-user";
 import SearchForm from "./components/SearchForm";
 import { getSearchTask } from "./api/get-search-task";
+import getStatistic from "./api/get-statistic";
+import Statistics from "./components/Statistics";
 
 function App() {
   const [newTask, setNewTask] = useState("");
@@ -20,10 +22,23 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState<number | null>(null);
+  const [statistics, setStatistics] = useState<ActiveUserStats[]>([]);
 
   const [filter, setFilter] = useState<TaskFilter>(undefined);
 
   const [search, setSearch] = useState<string>("");
+
+  useEffect(() => {
+    const statistic = async () => {
+      try {
+        const result = await getStatistic();
+        setStatistics(result);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    statistic();
+  }, []);
 
   const handleLogout = () => {
     setUsername("");
@@ -130,6 +145,7 @@ function App() {
   return (
     <main>
       <h1>TaskFlow</h1>
+      <Statistics statistics={statistics} />
 
       <LoginForm
         username={username}

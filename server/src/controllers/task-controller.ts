@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { db } from "../db/index.js";
-import { tasks as tasksTable } from "../db/schema.js";
-import { eq, asc, and, ilike, count } from "drizzle-orm";
+import { tasks as tasksTable, users as usersTable } from "../db/schema.js";
+import { eq, asc, and, ilike, count, gt } from "drizzle-orm";
 import {
   taskIdSchema,
   createTaskSchema,
@@ -99,5 +99,20 @@ export const getUserTasksByFilter = async (req: Request, res: Response) => {
     .where(
       and(eq(tasksTable.userId, id), ilike(tasksTable.title, `%${search}%`)),
     );
+  res.json(result);
+};
+
+export const statisticActiveTask = async (req: Request, res: Response) => {
+  const result = await db
+    .select({
+      userId: tasksTable.userId,
+      total: count(),
+      name: usersTable.name,
+    })
+    .from(tasksTable)
+    .innerJoin(usersTable, eq(tasksTable.userId, usersTable.id))
+    .where(eq(tasksTable.completed, false))
+    .groupBy(tasksTable.userId, usersTable.id)
+    .having(gt(count(), 2));
   res.json(result);
 };

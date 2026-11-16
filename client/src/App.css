@@ -45,3 +45,55 @@ ul {
 .searchConntent {
   margin: 10px;
 }
+
+.statistics {
+  margin-top: 32px;
+  padding: 24px;
+}
+
+.statistics h2 {
+  margin-bottom: 8px;
+}
+
+.statistics>p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  background: #1e293b;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.stat-user {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.stat-number {
+  color: #38bdf8;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.stat-label {
+  color: #94a3b8;
+  font-size: 13px;
+}

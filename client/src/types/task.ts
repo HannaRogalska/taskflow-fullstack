@@ -11,3 +11,9 @@ export type taskItemProps = {
   onToggle: (id: number) => void;
   deleteTask: (id: number) => void;
 };
+
+export type ActiveUserStats = {
+  userId: number;
+  total: number;
+  name: string;
+};
