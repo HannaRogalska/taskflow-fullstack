@@ -2,12 +2,9 @@ import type { Request, Response } from "express";
 import { db } from "../db/index.js";
 import { users as userTable } from "../db/schema.js";
 import { eq } from "drizzle-orm";
+import { loginUserSchema } from "../validators/user-validator.js";
 export const loginUser = async (req: Request, res: Response) => {
-  const { userName } = req.body;
-  if (typeof userName !== "string") {
-    res.status(400).json({ message: "Invalid username" });
-    return;
-  }
+  const { userName } = loginUserSchema.parse(req.body);
   const [getUser] = await db
     .select()
     .from(userTable)
