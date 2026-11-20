@@ -13,7 +13,15 @@ import {
 
 export const deleteTask = async (req: Request, res: Response) => {
   const { id } = taskIdSchema.parse(req.params);
-  await db.delete(tasksTable).where(eq(tasksTable.id, id));
+  const [deletedTask] = await db
+    .delete(tasksTable)
+    .where(eq(tasksTable.id, id))
+    .returning({ id: tasksTable.id });
+
+  if (!deletedTask) {
+    res.status(404).json({ message: "Task not found" });
+    return;
+  }
   res.json({
     message: "Task deleted successfully",
   });
@@ -36,6 +44,10 @@ export const updateTask = async (req: Request, res: Response) => {
     .set({ completed })
     .where(eq(tasksTable.id, id))
     .returning();
+  if (!result) {
+    res.status(404).json({ message: "Task not found" });
+    return;
+  }
   res.json(result);
 };
 export const getTaskPagination = async (req: Request, res: Response) => {
