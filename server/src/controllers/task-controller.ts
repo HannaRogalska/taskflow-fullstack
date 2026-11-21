@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { db } from "../db/index.js";
 import { tasks as tasksTable, users as usersTable } from "../db/schema.js";
-import { eq, asc, and, ilike, count, gt } from "drizzle-orm";
+import { eq, asc, and, ilike, count, gt, inArray } from "drizzle-orm";
 import {
   taskIdSchema,
   createTaskSchema,
@@ -127,4 +127,16 @@ export const statisticActiveTask = async (req: Request, res: Response) => {
     .groupBy(tasksTable.userId, usersTable.id)
     .having(gt(count(), 2));
   res.json(result);
+};
+
+export const getTasksFromActiveUsers = async (req: Request, res: Response) => {
+  const id = db
+    .select({ id: tasksTable.userId })
+    .from(tasksTable)
+    .where(eq(tasksTable.completed, false));
+  const tasks = await db
+    .select()
+    .from(tasksTable)
+    .where(inArray(tasksTable.userId, id));
+  res.json(tasks);
 };

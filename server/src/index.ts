@@ -10,6 +10,7 @@ import {
   getTaskPagination,
   getUserTasksByFilter,
   statisticActiveTask,
+  getTasksFromActiveUsers,
 } from "./controllers/task-controller.js";
 import { loginUser } from "./controllers/user-controller.js";
 
@@ -27,6 +28,7 @@ app.post("/api/users/login", loginUser);
 app.get("/users/:id/tasks", getTaskPagination);
 app.get("/api/users/:id/tasks/search", getUserTasksByFilter);
 app.get("/api/tasks/stats/active-users", statisticActiveTask);
+app.get("/tasks/from-active-users", getTasksFromActiveUsers);
 app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
