@@ -14,6 +14,8 @@ import SearchForm from "./components/SearchForm";
 import { getSearchTask } from "./api/get-search-task";
 import getStatistic from "./api/get-statistic";
 import Statistics from "./components/Statistics";
+import getTasksOfUsersWithPendingTasks from "./api/get-tasks-of-users-with-pending-tasks";
+import TasksOfActiveUsers from "./components/TasksOfActiveUsers";
 
 function App() {
   const [newTask, setNewTask] = useState("");
@@ -27,6 +29,7 @@ function App() {
   const [filter, setFilter] = useState<TaskFilter>(undefined);
 
   const [search, setSearch] = useState<string>("");
+  const [tasksOfActiveUsers, setTasksOfActiveUsers] = useState<Task[]>([]);
 
   useEffect(() => {
     const statistic = async () => {
@@ -37,7 +40,16 @@ function App() {
         console.error(e);
       }
     };
+    const fetchTasksOfActiveUsers = async () => {
+      try {
+        const result = await getTasksOfUsersWithPendingTasks();
+        setTasksOfActiveUsers(result);
+      } catch (e) {
+        console.error(e);
+      }
+    };
     statistic();
+    fetchTasksOfActiveUsers();
   }, []);
 
   const handleLogout = () => {
@@ -146,6 +158,7 @@ function App() {
     <main>
       <h1>TaskFlow</h1>
       <Statistics statistics={statistics} />
+      <TasksOfActiveUsers tasks={tasksOfActiveUsers} />
 
       <LoginForm
         username={username}
