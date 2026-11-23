@@ -137,6 +137,7 @@ export const getTasksFromActiveUsers = async (req: Request, res: Response) => {
   const tasks = await db
     .select()
     .from(tasksTable)
-    .where(inArray(tasksTable.userId, id));
+    .where(inArray(tasksTable.userId, id))
+    .orderBy(asc(tasksTable.id));
   res.json(tasks);
 };
