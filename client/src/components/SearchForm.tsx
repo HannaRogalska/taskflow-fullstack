@@ -11,14 +11,25 @@ type SearchFormProps = {
 
 const SearchForm = ({ title, onChangeTitle, onSubmit, onClear, loading }: SearchFormProps) => {
   return (
-    <form onSubmit={onSubmit} className="searchConntent">
+    <form
+      onSubmit={(e) => {
+        if (!title.trim() || loading) {
+          e.preventDefault();
+          return;
+        }
+        return onSubmit(e);
+      }}
+      className="searchConntent"
+    >
       <input
         type="text"
         placeholder="Search"
         value={title}
         onChange={(e) => onChangeTitle(e.target.value)}
       />
-      <button type="submit">Search</button>
+      <button type="submit" disabled={loading || !title.trim()}>
+        Search
+      </button>
       <button type="button" onClick={onClear} disabled={loading}>
         Clear search
       </button>
