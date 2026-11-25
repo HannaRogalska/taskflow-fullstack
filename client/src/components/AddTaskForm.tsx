@@ -8,6 +8,7 @@ type AddTaskFormProps = {
 
 const AddTaskForm = ({ newTask, onTaskChange, onAddTask }: AddTaskFormProps) => {
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <form
@@ -16,8 +17,11 @@ const AddTaskForm = ({ newTask, onTaskChange, onAddTask }: AddTaskFormProps) => 
         if (submitting) return;
 
         setSubmitting(true);
+        setError(null);
         try {
           await onAddTask();
+        } catch {
+          setError("Failed to add task. Please try again.");
         } finally {
           setSubmitting(false);
         }
@@ -32,6 +36,7 @@ const AddTaskForm = ({ newTask, onTaskChange, onAddTask }: AddTaskFormProps) => 
       <button type="submit" disabled={submitting}>
         {submitting ? "Adding..." : "AddNewTask"}
       </button>
+      {error && <p role="alert">{error}</p>}
     </form>
   );
 };
