@@ -34,7 +34,7 @@ export const createTask = async (req: Request, res: Response) => {
     .insert(tasksTable)
     .values({ userId: id, title })
     .returning();
-  res.json(result);
+  res.status(201).json(result);
 };
 export const updateTask = async (req: Request, res: Response) => {
   const { id } = taskIdSchema.parse(req.params);
