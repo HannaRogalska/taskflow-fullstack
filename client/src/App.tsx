@@ -101,11 +101,16 @@ function App() {
     const task = tasks.find((task) => task.id === id);
     if (!task) return;
 
-    const updatedTask = await patchTask(id, !task.completed);
+    setError(null);
+    try {
+      const updatedTask = await patchTask(id, !task.completed);
 
-    setTasks((tasks) =>
-      tasks.map((task) => (task.id === id ? updatedTask : task)),
-    );
+      setTasks((tasks) =>
+        tasks.map((task) => (task.id === id ? updatedTask : task)),
+      );
+    } catch {
+      setError("Failed to update task status. Please try again.");
+    }
   };
   const handleChangeFilter = async (data: TaskFilter) => {
     setFilter(data);
