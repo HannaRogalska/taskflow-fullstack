@@ -63,8 +63,13 @@ function App() {
   };
 
   const handleDeleteTask = async (id: number) => {
-    await deleteTask(id);
-    setTasks((prev) => prev.filter((task) => task.id !== id));
+    setError(null);
+    try {
+      await deleteTask(id);
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+    } catch {
+      setError("Failed to delete task. Please try again.");
+    }
   };
   const addNewTask = async () => {
     const newTitle = newTask.trim();
