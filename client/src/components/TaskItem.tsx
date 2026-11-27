@@ -8,10 +8,16 @@ const TaskItem = ({ task, onToggle, deleteTask }: taskItemProps) => {
       <div>
         <input
           type="checkbox"
+          aria-label={`Mark ${task.title} as ${task.completed ? "active" : "completed"}`}
           onChange={() => onToggle(task.id)}
           checked={task.completed}
         />
-        <button onClick={() => deleteTask(task.id)}>Delete</button>
+        <button
+          aria-label={`Delete task: ${task.title}`}
+          onClick={() => deleteTask(task.id)}
+        >
+          Delete
+        </button>
       </div>
     </li>
   );
