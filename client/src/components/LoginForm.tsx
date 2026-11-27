@@ -16,14 +16,25 @@ const LoginForm = ({
   loading,
 }: LoginFormProps) => {
   return (
-    <form onSubmit={onSubmit}>
+    <form
+      onSubmit={(e) => {
+        if (!username.trim() || loading) {
+          e.preventDefault();
+          return;
+        }
+        return onSubmit(e);
+      }}
+    >
       <input
         type="text"
         placeholder="Enter your username"
         value={username}
+        disabled={loading}
         onChange={(e) => onUsernameChange(e.target.value)}
       />
-      <button type="submit">Log In</button>
+      <button type="submit" disabled={loading || !username.trim()}>
+        Log In
+      </button>
       <button type="button" onClick={onLogout} disabled={loading}>
         Log Out
       </button>
