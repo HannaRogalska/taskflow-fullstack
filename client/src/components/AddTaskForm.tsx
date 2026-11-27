@@ -16,6 +16,11 @@ const AddTaskForm = ({ newTask, onTaskChange, onAddTask }: AddTaskFormProps) => 
         e.preventDefault();
         if (submitting) return;
 
+        if (newTask.trim().length < 3) {
+          setError("Task title must contain at least 3 characters.");
+          return;
+        }
+
         setSubmitting(true);
         setError(null);
         try {
