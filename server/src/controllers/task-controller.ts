@@ -30,6 +30,16 @@ export const createTask = async (req: Request, res: Response) => {
   const { id } = taskIdSchema.parse(req.params);
 
   const { title } = createTaskSchema.parse(req.body);
+  const [user] = await db
+    .select({ id: usersTable.id })
+    .from(usersTable)
+    .where(eq(usersTable.id, id));
+
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+
   const [result] = await db
     .insert(tasksTable)
     .values({ userId: id, title })
