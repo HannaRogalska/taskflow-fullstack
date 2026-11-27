@@ -130,7 +130,8 @@ export const getUserTasksByFilter = async (req: Request, res: Response) => {
     .from(tasksTable)
     .where(
       and(eq(tasksTable.userId, id), ilike(tasksTable.title, `%${search}%`)),
-    );
+    )
+    .orderBy(asc(tasksTable.id));
   res.json(result);
 };
 
