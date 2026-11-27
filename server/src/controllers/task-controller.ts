@@ -95,6 +95,16 @@ export const getUserTasks = async (req: Request, res: Response) => {
   const { id } = taskIdSchema.parse(req.params);
 
   const { completed } = taskFilterSchema.parse(req.query);
+  const [user] = await db
+    .select({ id: usersTable.id })
+    .from(usersTable)
+    .where(eq(usersTable.id, id));
+
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+
   const result = await db
     .select()
     .from(tasksTable)
