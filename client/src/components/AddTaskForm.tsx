@@ -36,7 +36,10 @@ const AddTaskForm = ({ newTask, onTaskChange, onAddTask }: AddTaskFormProps) => 
         type="text"
         value={newTask}
         disabled={submitting}
-        onChange={(e) => onTaskChange(e.target.value)}
+        onChange={(e) => {
+          onTaskChange(e.target.value);
+          setError(null);
+        }}
       />
       <button type="submit" disabled={submitting}>
         {submitting ? "Adding..." : "AddNewTask"}
